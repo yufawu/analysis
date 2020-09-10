@@ -5,7 +5,7 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param roles
  * @param route
  */
-function hasPermission(roles, route) {
+function hasPermission(roles, route) { 
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role))
   } else {
@@ -14,7 +14,7 @@ function hasPermission(roles, route) {
 }
 
 /**
- * Filter asynchronous routing tables by recursion
+ * Filter asynchronous routing tables by recursion //通过权限筛选递归路由表
  * @param routes asyncRoutes
  * @param roles
  */

@@ -2,7 +2,7 @@ const chokidar = require('chokidar')
 const bodyParser = require('body-parser')
 const chalk = require('chalk')
 const path = require('path')
-const Mock = require('mockjs')
+const Mock = require('mockjs') //使用mock.js模拟数据
 
 const mockDir = path.join(process.cwd(), 'mock')
 

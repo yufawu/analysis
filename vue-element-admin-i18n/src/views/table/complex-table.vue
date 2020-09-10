@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <!-- 表格筛选条件 -->
+    <div class="filter-container"> 
       <el-input v-model="listQuery.title" :placeholder="$t('table.title')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.importance" :placeholder="$t('table.importance')" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
@@ -13,7 +14,7 @@
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('table.search') }}
-      </el-button>
+      </el-button>·
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
       </el-button>
@@ -24,7 +25,7 @@
         {{ $t('table.reviewer') }}
       </el-checkbox>
     </div>
-
+     <!-- 表格内容 -->
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -100,26 +101,33 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <!-- 表单 -->
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+        <!-- 类型 -->
         <el-form-item :label="$t('table.type')" prop="type">
           <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
             <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
+        <!-- 日期选择 -->
         <el-form-item :label="$t('table.date')" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
+        <!-- 标题 -->
         <el-form-item :label="$t('table.title')" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
+        <!-- 状态 发布 草稿 删除-->
         <el-form-item :label="$t('table.status')">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
+        <!-- 重要性 3种颜色 最大值3-->
         <el-form-item :label="$t('table.importance')">
           <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
         </el-form-item>
+        <!-- 点评  默认2行，最大4行，超出出现滚动条-->
         <el-form-item :label="$t('table.remark')">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
         </el-form-item>
@@ -128,6 +136,7 @@
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
+        <!-- 确定 -->
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           {{ $t('table.confirm') }}
         </el-button>
@@ -188,7 +197,7 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
-      listQuery: {
+      listQuery: { //默认列表请求参数
         page: 1,
         limit: 20,
         importance: undefined,
@@ -201,17 +210,17 @@ export default {
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
-      temp: {
+      temp: { //表单的默认数据
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
+        importance: 1, //重要性
+        remark: '',//点评
+        timestamp: new Date(),//时间
+        title: '',//标题
+        type: '',//类型
         status: 'published'
       },
       dialogFormVisible: false,
-      dialogStatus: '',
+      dialogStatus: '',//对话框状态，通过这个判断是新增数据（新增），还是更新数据（编辑）
       textMap: {
         update: 'Edit',
         create: 'Create'
@@ -230,7 +239,7 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
+    getList() { //获取列表
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.data.items
@@ -246,14 +255,14 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
+    handleModifyStatus(row, status) { //修改状态
       this.$message({
         message: '操作成功',
         type: 'success'
       })
       row.status = status
     },
-    sortChange(data) {
+    sortChange(data) { //排序
       const { prop, order } = data
       if (prop === 'id') {
         this.sortByID(order)
@@ -267,9 +276,9 @@ export default {
       }
       this.handleFilter()
     },
-    resetTemp() {
+    resetTemp() { //设置表单默认值
       this.temp = {
-        id: undefined,
+        id: undefined, //什么时候赋予真正id?
         importance: 1,
         remark: '',
         timestamp: new Date(),
@@ -278,18 +287,21 @@ export default {
         type: ''
       }
     },
-    handleCreate() {
+    handleCreate() { //新增数据
       this.resetTemp()
-      this.dialogStatus = 'create'
+      this.dialogStatus = 'create'//修改为新增状态
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+      this.$nextTick(() => { //dom节点更新后的操作
+        this.$refs['dataForm'].clearValidate() //this.$refs 操作原生事件
       })
     },
+    /**
+     * 
+     */
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
+          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id 2位数+1024
           this.temp.author = 'vue-element-admin'
           createArticle(this.temp).then(() => {
             this.list.unshift(this.temp)
@@ -304,24 +316,34 @@ export default {
         }
       })
     },
+    /**
+     * 更新，在点击标题跟编辑时触发该事件，
+     */
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
+      this.temp = Object.assign({}, row) // copy obj复制当前对象
+      this.temp.timestamp = new Date(this.temp.timestamp) //从当前对象中取出时间，对时间插件进行初始化
+      this.dialogStatus = 'update' //对话框为更新状态
+      this.dialogFormVisible = true //显示表单对话框
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    /**
+     * 点击弹出框的确认按钮
+     */
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
+          const tempData = Object.assign({}, this.temp) //复制对象
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          updateArticle(tempData).then(() => { //请求接口更新数据
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
+            /**
+             * Element 为 Vue.prototype 添加了全局方法 $notify 
+             * 对应的组件 Notification 通知
+             */
             this.$notify({
               title: '成功',
               message: '更新成功',
@@ -341,22 +363,31 @@ export default {
       })
       this.list.splice(index, 1)
     },
-    handleFetchPv(pv) {
+    handleFetchPv(pv) { //计算阅读数
       fetchPv(pv).then(response => {
         this.pvData = response.data.pvData
         this.dialogPvVisible = true
       })
     },
-    handleDownload() {
+    handleDownload() {//下载
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
+        /**
+         * 如果想要选择某几列导出，可以用该表格表头数据弄成多选框，然后用户进行选择，选择后的值赋给tHeader，filterVal即可
+         * 参数说明如下
+         * header	导出数据的表头	Array	/	[]
+         * data	导出的具体数据	Array	/	[]]
+         * filename	导出文件名	String	/	excel-list
+         * autoWidth	单元格是否要自适应宽度	Boolean	true / false	true
+         * bookType	导出文件类型	String	xlsx, csv, txt, more	xlsx
+         */
+        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status'] 
         const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
+          header: tHeader, //表头
+          data, //数据
+          filename: 'table-list' //文件名
         })
         this.downloadLoading = false
       })

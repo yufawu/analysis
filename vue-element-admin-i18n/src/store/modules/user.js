@@ -11,31 +11,31 @@ const state = {
 }
 
 const mutations = {
-  SET_TOKEN: (state, token) => {
+  SET_TOKEN: (state, token) => { //设置token
     state.token = token
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
   },
-  SET_NAME: (state, name) => {
+  SET_NAME: (state, name) => { //用户名
     state.name = name
   },
-  SET_AVATAR: (state, avatar) => {
+  SET_AVATAR: (state, avatar) => { //头像
     state.avatar = avatar
   },
-  SET_ROLES: (state, roles) => {
+  SET_ROLES: (state, roles) => { //角色
     state.roles = roles
   }
 }
 
 const actions = {
-  // user login
+  // user login 用户登录
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
+        const { data } = response //
+        commit('SET_TOKEN', data.token) //保存token
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -72,12 +72,12 @@ const actions = {
     })
   },
 
-  // user logout
+  // user logout 
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
+        commit('SET_TOKEN', '') //清空vuex中的token值
+        commit('SET_ROLES', []) //清空vuex中的roles值
         removeToken()
         resetRouter()
 
@@ -92,7 +92,7 @@ const actions = {
     })
   },
 
-  // remove token
+  // remove token 清除token
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
@@ -102,7 +102,7 @@ const actions = {
     })
   },
 
-  // dynamically modify permissions
+  // dynamically modify permissions 动态改变权限
   async changeRoles({ commit, dispatch }, role) {
     const token = role + '-token'
 

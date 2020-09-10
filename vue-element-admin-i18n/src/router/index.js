@@ -23,7 +23,7 @@ import nestedRouter from './modules/nested'
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
-    roles: ['admin','editor']    control the page roles (you can set multiple roles)
+    roles: ['admin','editor']    control the page roles (you can set multiple roles) //是否可以根据后端返回数据动态设置？
     title: 'title'               the name show in sidebar and breadcrumb (recommend set)
     icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
     noCache: true                if set true, the page will no be cached(default is false)
@@ -125,8 +125,8 @@ export const constantRoutes = [
 ]
 
 /**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
+ * asyncRoutes 异步挂载的路由
+ * the routes that need to be dynamically loaded based on user roles 需要根据权限动态加载的路由表
  */
 export const asyncRoutes = [
   {
@@ -135,10 +135,10 @@ export const asyncRoutes = [
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
-    meta: {
+    meta: { //后面可以通过meta标签表示页面能访问的权限有哪些
       title: 'permission',
       icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      roles: ['admin', 'editor'] // you can set roles in root nav 页面需要的权限
     },
     children: [
       {
